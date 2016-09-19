@@ -1,0 +1,12 @@
+In this project we were tasked with implementing a table view controller that lists student information. For this project, upon opening the application we are brought to a login screen. This screen verifies if there is a duke email address entered before proceeding to the next screen, which shows a list of the cells of the added students. Team cells and member cells are created as two different types of cells with different formats. Team cells are grey with different font and show the student’s photo along with major and name. Member cells are white and show the member’s photo along with name, major, and hometown. 
+
+All of the cells are editable. Simply tap on any cell and this will bring you to the edit page, where you can view the student’s full information and picture. You can edit the information, as well as select or take a photo and save it with the save button. This dynamically updates the information in the cell and brings you back to the table view controller page. You can also cancel to return to the previous page without saving.
+
+To add a new student, simply click the plus button on the top right corner. This brings you to a blank edit page where you can enter and save the information for a new student. Note that all fields except the photo must be filled, otherwise the fields will be highlighted in red before you can save. If no photo has been selected, the app uploads a temp photo to that student’s profile.
+
+Attempt for full credit:
+1. To better organize the classes, I again implemented a protocol for students and saved the collection of students in a class called AllStudents. This class contains a map of all of the students, as well as implements functions to add new students. This is done in an attempt to better organize the code and save the View Controller from being cluttered.
+
+2. I have made an attempt at persisting data and have created property keys for student’s names and fields. This is then saved to an NSArchiver object and loaded to an NSArchiverobject. However, right now the persisting of data is rather limited and only the most recently added student will save. This can be expanded on once we learn more in class.
+
+3. Added the ability to delete students. Also restricted this delete so that team members will not be deletable. This delete also deletes the persisted data as well, if applicable.
