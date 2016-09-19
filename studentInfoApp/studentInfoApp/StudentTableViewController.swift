@@ -47,25 +47,25 @@ class StudentTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-          //Load the team data
-//       navigationItem.leftBarButtonItem = editButtonItem()
-
+        //Load the team data
+        navigationItem.leftBarButtonItem = editButtonItem()
+        
         addMyTeam()
-            first = false
-
-            if let savedStudents = loadStudents(){
+        first = false
+        
+        if let savedStudents = loadStudents(){
             print("load")
             studentInfos = savedStudents
-                for key in studentInfos.studentMap().keys{
-                    print (key)
-                    if(studentCollection[key]==nil){
+            for key in studentInfos.studentMap().keys{
+                print (key)
+                if(studentCollection[key]==nil){
                     studentCollection[key] = studentInfos.studentMap()[key]
                     keyArr.append(key)
-                    }
                 }
-
             }
-      
+            
+        }
+        
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -92,10 +92,10 @@ class StudentTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var myTeamIdentifier:String = String()
-      
+        
         if(indexPath.row == 0||indexPath.row == 1||indexPath.row == 2||indexPath.row == 3){
-           myTeamIdentifier = "StudentTableViewCell"
-             let cell = tableView.dequeueReusableCellWithIdentifier(myTeamIdentifier, forIndexPath: indexPath) as! StudentTableViewCell
+            myTeamIdentifier = "StudentTableViewCell"
+            let cell = tableView.dequeueReusableCellWithIdentifier(myTeamIdentifier, forIndexPath: indexPath) as! StudentTableViewCell
             
             //Grab the specific student
             
@@ -111,11 +111,12 @@ class StudentTableViewController: UITableViewController {
             cell.backgroundColor = UIColor.lightGrayColor()
             cell.myNameField.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 17)
             cell.myMajor.font = UIFont(name: "AppleSDGothicNeo-Thin",size:20)
+            
             return cell
         }
         else{
-             myTeamIdentifier = "MemberTableViewCell"
-             let cell = tableView.dequeueReusableCellWithIdentifier(myTeamIdentifier, forIndexPath: indexPath) as! MemberTableViewCell
+            myTeamIdentifier = "MemberTableViewCell"
+            let cell = tableView.dequeueReusableCellWithIdentifier(myTeamIdentifier, forIndexPath: indexPath) as! MemberTableViewCell
             
             //Grab the specific student
             
@@ -134,13 +135,13 @@ class StudentTableViewController: UITableViewController {
             return cell
         }
     }
-   
+    
     //dismiss keyboard when touch outside
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?){
         view.endEditing(true)
         super.touchesBegan(touches, withEvent: event)
     }
-   
+    
     
     @IBAction func unwindToStudentList(sender:UIStoryboardSegue){
         if let sourceViewController = sender.sourceViewController as?
@@ -155,45 +156,48 @@ class StudentTableViewController: UITableViewController {
             else{
                 
                 let newIndex = NSIndexPath(forRow:studentCollection.count,inSection:0)
-//                print (newStudent.name)
+                //                print (newStudent.name)
                 studentCollection[newStudent.name] = newStudent
                 keyArr.append(newStudent.name)
                 tableView.insertRowsAtIndexPaths([newIndex], withRowAnimation:.Bottom )
                 
             }
             //don't save if we are adding team member
-            if(keyArr.indexOf(newStudent.name)>4){
-            studentInfos.newStudent = newStudent
-            print("saved")
-            saveStudents()
+            if(keyArr.indexOf(newStudent.name)>3){
+                studentInfos.newStudent = newStudent
+                print("saved")
+                saveStudents()
             }
         }
     }
     
     
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
+    
+    // Override to support conditional editing of the table view.
+    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        if(indexPath.row<=3){
+            return false;
+        }
+        return true
+    }
     
     
-     // Override to support editing the table view.
-     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-     if editingStyle == .Delete {
-     // Delete the row from the data source
-        studentCollection.removeValueForKey(keyArr[indexPath.row])
-        keyArr.removeAtIndex(indexPath.row)
-        saveStudents()
-        tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        
-     tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-     } else if editingStyle == .Insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
+    
+    // Override to support editing the table view.
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if editingStyle == .Delete {
+            // Delete the row from the data source
+            
+            deleteStudent(studentCollection[keyArr[indexPath.row]]!)
+            studentCollection.removeValueForKey(keyArr[indexPath.row])
+            keyArr.removeAtIndex(indexPath.row)
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            
+            
+        } else if editingStyle == .Insert {
+            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+        }
+    }
     
     
     /*
@@ -232,7 +236,7 @@ class StudentTableViewController: UITableViewController {
                 let student = studentCollection[keyArr[indexPath.row]]
                 studentDetailViewController.newStudent = student
             }
-
+            
         }
         else if segue.identifier == "addItem" {
             print("adding new student")
@@ -250,10 +254,21 @@ class StudentTableViewController: UITableViewController {
     }
     
     func loadStudents() -> AllStudents?{
-//        print(NSKeyedUnarchiver.unarchiveObjectWithFile(AllStudents.ArchiveURL.path!) as? AllStudents)
+        //        print(NSKeyedUnarchiver.unarchiveObjectWithFile(AllStudents.ArchiveURL.path!) as? AllStudents)
         print ("loaded")
         return NSKeyedUnarchiver.unarchiveObjectWithFile(AllStudents.ArchiveURL.path!) as? AllStudents
-//        return nil
+        //        return nil
+    }
+    func deleteStudent(student:Student){
+        let exists = NSFileManager.defaultManager().fileExistsAtPath(AllStudents.ArchiveURL.path!)
+        if exists {
+            do {
+                try NSFileManager.defaultManager().removeItemAtPath(AllStudents.ArchiveURL.path!)
+            }catch let error as NSError {
+                print("error: \(error.localizedDescription)")
+                
+            }
+        }
     }
     
     
